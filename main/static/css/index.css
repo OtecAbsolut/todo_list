@@ -683,3 +683,7 @@ li {
   width: 260px;
   word-break: break-all;
   margin-left: 50px; }
+
+.is_done_text {
+  text-decoration: line-through;
+}
