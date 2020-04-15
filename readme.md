@@ -41,7 +41,7 @@ python manage.py showmigrations
 python manage.py createsuperuser
 ```
 - Изучили, служебные таблицы
-## 2. Templates
+## Templates
 https://docs.djangoproject.com/en/3.0/ref/templates/
 ## Д\З
 - Повторить проделанные нами операции по подключению БД
