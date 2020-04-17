@@ -68,10 +68,10 @@ https://docs.djangoproject.com/en/3.0/ref/templates/
 
 Ссылка на документацию:
 https://docs.djangoproject.com/en/3.0/howto/custom-template-tags/  
-Не забываем также создать папку **templatetags**:  
+Не забываем также создать папку **templatetags**, в которой нужно разместить модуль с функцией тега:  
 ![dir](img/2.png)
 
-Для этого нужно дополнительно зарегистрировать нашу библиотеку тегов в 
+Также нужно дополнительно зарегистрировать нашу библиотеку тегов в 
 **settings.py**  
 ```python
 INSTALLED_APPS = [
