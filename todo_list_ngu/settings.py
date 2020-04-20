@@ -37,7 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main'
+    'main',
+    'main.templatetags',
+    'list_item'
 ]
 
 MIDDLEWARE = [
@@ -119,6 +121,8 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Минимальное число div на странице
+DIV_COUNT = 6
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
