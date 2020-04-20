@@ -1,4 +1,4 @@
-# Урок №2
+# УРОК №2
 ## БД подключение, донастройка рабочего окружения
 - Какие БД поддерживает джанга
 - Почему PostgresSQL?  
@@ -86,3 +86,122 @@ INSTALLED_APPS = [
 ```
 И подгрузить библиотеку тегов на страницу шаблона:  
 ![dir](img/3.png)
+
+# УРОК №3
+## Наследование шаблонов
+- теги block, extend
+```
+{% extends 'master.html' %}
+
+{% block title %}
+    <title>Главная</title>
+{% endblock %}
+
+{% block name_list %}
+    <div class="table-data_table-header-item-1">TO DO List</div>
+{% endblock %}
+```
+## Оптимизация роутинга URL
+- функций include, и app_name = 'main'
+```python
+# \todo_list_ngu\todo_list_ngu\urls.py
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('main.urls')),
+    path('list/', include('list.urls')),
+]
+
+# \todo_list\main\urls.py
+app_name = 'main'
+
+urlpatterns = [
+    path('', main_view, name='main'),
+    path('create/', create_new_list, name='create')
+]
+```
+- Обрашение в темплейте по app_name
+```python
+ <a href='{% url "main:edit" pk=list.id %}'>
+```
+## Django ORM
+Архитектура MVC  
+![mvc](img/4.png)
+
+ORM (англ. Object-Relational Mapping, рус. объектно-реляционное отображение, или 
+преобразование) — технология программирования, которая 
+связывает базы данных с концепциями объектно-ориентированных языков программирования  
+
+**Django ORM Cookbook**  
+https://prglb.ru/3h66k
+
+**Офиц. документация**  
+https://docs.djangoproject.com/en/3.0/ref/models/querysets/#
+
+
+
+Рассмотрим:
+- Проектирование БД  
+https://docs.google.com/spreadsheets/d/1He-IVLLfwQv6MOhD6RbKyt3sItyfoAXgc98_c3ZSIo8/edit?usp=sharing
+- model.Model
+- Создание модели ListModel, типы данных
+- Миграции
+- Подключение модели к Админке  
+
+main\admin.py
+```python
+from django.contrib import admin
+from main.models import ListModel
+
+
+class ListAdmin(admin.ModelAdmin):
+    list_display = ['id', 'created', 'name', 'is_done', 'user']
+    list_filter = ['created', 'name', 'is_done', 'user']
+    search_fields = ['name', 'user']
+
+
+admin.site.register(ListModel, ListAdmin)
+```
+- Менеджер модели objects, и основные его методы
+```python
+item = Model.objects.get(id=1)
+items = Model.objects.filter(id=1)
+item.name = 'New name'
+item.save()
+item.delete()
+order_by('id')
+```
+- Debug => QuerySet=> SQL 
+- Ленивый QuerySet  
+
+![cat](img/5.png)
+
+- ? дебагер с SQL запросами
+```python
+LOGGING = {
+    'version': 1,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        }
+    }
+}
+```
+
+## Д\З
+- Синхронизировать код.
+- Создание модели ListItemModel
+- Миграции
+- Добавить ListItemModel в админку
