@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, reverse, redirect
 
 data = {
     'lists': [
@@ -12,6 +12,9 @@ data = {
 }
 
 
-def list_item_view(request):
+def list_item_view(request, pk):
     context = data
     return render(request, 'list.html', context)
+
+
+

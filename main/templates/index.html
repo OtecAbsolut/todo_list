@@ -10,9 +10,9 @@
         <div class="table-row_table_cell-1">
             <a href="#">
                 {% if list.is_done  %}
-                    <li>{{ list.name }}</li>
-                {% else %}
                     <li class="is_done_text">{{ list.name }}</li>
+                {% else %}
+                    <li>{{ list.name }}</li>
                 {% endif %}
             </a>
         </div>

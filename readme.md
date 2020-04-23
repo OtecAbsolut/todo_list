@@ -161,6 +161,44 @@ class ListAdmin(admin.ModelAdmin):
 
 admin.site.register(ListModel, ListAdmin)
 ```
+
+## Д\З
+- Синхронизировать код.
+- Создание модели ListItemModel
+- Миграции
+- Добавить ListItemModel в админку
+
+# УРОК №4
+## Django ORM продолжение...
+- Дескрипторы
+```python
+class AgeCheck:
+    """
+    Дескриптор
+    """
+    def __get__(self, instance, owner):
+        return instance.__dict__[self.name]
+
+    def __set_name__(self, owner, name):
+        self.name = name
+
+    def __set__(self, instance, value):
+        if value < 18:
+            raise ValueError('Меньше 18 лет')
+        instance.__dict__[self.name] = value
+
+
+class Human:
+
+    age = AgeCheck()
+
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+
+man = Human('Bob', 15)
+```
 - Менеджер модели objects, и основные его методы
 ```python
 item = Model.objects.get(id=1)
@@ -169,6 +207,7 @@ item.name = 'New name'
 item.save()
 item.delete()
 order_by('id')
+ListItem.objects.filter(list__user__username='Admin')
 ```
 - Debug => QuerySet=> SQL 
 - Ленивый QuerySet  
@@ -199,9 +238,60 @@ LOGGING = {
     }
 }
 ```
+## Django - forms
+### Регистрация и логин
+https://docs.djangoproject.com/en/3.0/ref/forms/api/
+- Новое **application** для регистрации пользователей
+- Форма регистрации пользователя
+
+```python
+class CustomUserCreationForm(UserCreationForm):
+    """
+    Форма регистрации нового пользователя.
+    С обязательными полями: ['username', 'password', 'email']
+    """
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = UserCreationForm.Meta.fields + ('email',)
+```
+- Шаблон формы регистрации
+- View обработка регистрационных данных
+```python
+def create_user(request):
+    form = CustomUserCreationForm()
+
+    if request.method == 'POST':
+        form = CustomUserCreationForm(data=request.POST)
+        success_url = reverse('main:main')
+
+        if form.is_valid():
+            form.save()
+            return redirect(success_url)
+
+    return render(request, 'registration.html', {'form': form})
+```  
+- ПОДСКАЗКА К ДЗ => Форма нового списка
+```python
+class ListForm(forms.ModelForm):
+    """
+    Форма натсроек расписания обмена
+    """
+    name = forms.CharField(widget=forms.TextInput())
+
+    class Meta:
+        model = ListModel
+        fields = ('name', 'user')
+```
+
 
 ## Д\З
-- Синхронизировать код.
-- Создание модели ListItemModel
-- Миграции
-- Добавить ListItemModel в админку
+- Переделать шаблон **list.html** с наследованием от **master**
+- Сделать динамические ссылки на list_items
+![](img/6.png)
+- Сделать **list_item_view** по отрисовки эелементов списков.
+По аналогии с главной вьюхой приложения main.
+Т.е. при клике на название списка, должна открываться страница списка
+- Форма создания нового списка дел (кнопка "+")
+- Вьюха создания нового списка
+- Шаблон создания нового списка
