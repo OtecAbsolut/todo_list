@@ -4,15 +4,24 @@
     <title>Главная</title>
 {% endblock %}
 
+{% block create %}
+    <div class="table-data__table-header">
+        <div class="table-data_table-header-item-1">TO DO List</div>
+        <a class="add_new_list" href="{% url "main:create" %}">
+            <div class="header__button-create-bundle">+</div>
+        </a>
+    </div>
+{% endblock %}
+
 {% block body %}
     {% for list in lists %}
         <div class="table-data__table-row">
         <div class="table-row_table_cell-1">
-            <a href="#">
+            <a href="{% url "list_item:list_item" pk=list.id %}">
                 {% if list.is_done  %}
-                    <li class="is_done_text">{{ list.name }}</li>
+                    {{ list.name }}
                 {% else %}
-                    <li>{{ list.name }}</li>
+                    {{ list.name }}
                 {% endif %}
             </a>
         </div>
@@ -44,6 +53,8 @@
             </div>
         </div>
     {% endfor %}
+
+
 {% endblock %}
 
 {% block empty_div %}
@@ -54,4 +65,15 @@
             </div>
         {% endfor %}
     {% endif %}
+{#    {% if pages.1 %}#}
+{#        <div class="table-data__table-row">#}
+{#            <div class="paginator_class">#}
+{#                <ul class="pagination-wrapper_button">#}
+{#                    {% for page in pages %}#}
+{#                        <li><a class="active" href="/?page={{ page }}">{{ page }}</a></li>#}
+{#                    {% endfor %}#}
+{#                </ul>#}
+{#            </div>#}
+{#        </div>#}
+{#    {% endif %}#}
 {% endblock %}

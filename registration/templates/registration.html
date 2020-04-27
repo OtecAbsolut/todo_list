@@ -6,8 +6,8 @@
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
       <title>Регистрация</title>
       <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
-      <link rel="stylesheet" href="static/css/registration.css">
-    <link rel="stylesheet" href="static/css/index.css">
+      <link rel="stylesheet" href="/static/css/registration.css">
+    <link rel="stylesheet" href="/static/css/index.css">
   </head>
 
   <body>
@@ -24,14 +24,22 @@
             <div class="form__header_title_enter"><a href="/">Вход</a></div>
           </div>
           <form class="registration_form_class" action="#" id="registration_form" method="POST">
+          {% csrf_token %}
             <p class="form_class_name-field"> Имя</p>
               {{ form.username }}
+              {% if form.username.errors %}
+                  {{ form.username.errors }}
+              {% endif %}
             <p class="form_class_name-field">e-mail</p>
               {{ form.email }}
             <p class="form_class_name-field"> Пароль</p>
               {{ form.password1 }}
             <p class="form_class_name-field">Подтверждение пароля</p>
               {{ form.password2 }}
+              {% if form.password2.errors %}
+               {{ form.password2.errors }}
+              {% endif %}
+
           </form>
           <div class="registration__column_right__form_footer">
             <label class="form_footer_button-submit">
