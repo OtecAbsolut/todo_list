@@ -86,7 +86,7 @@ a {
 
 .cash-office_list li:before, .warehouse_list li:before {
   content: '';
-  display: inline-block;
+  display: none;
   height: 6px;
   width: 6px;
   vertical-align: middle;
@@ -107,7 +107,7 @@ a {
   font-family: Inter;
   font-style: normal;
   font-weight: normal;
-  font-size: 13px;
+  font-size: 18px;
   line-height: 18px;
   color: #48555F;
   background: #FFFFFF;
@@ -395,7 +395,7 @@ body {
     padding: 5px; }
   .object-mts_list li:before {
     content: '';
-    display: inline-block;
+    display: none;
     height: 6px;
     width: 6px;
     vertical-align: middle;
@@ -652,7 +652,7 @@ body {
   }
 li:before {
   content: '';
-  display: inline-block;
+  display: none;
   height: 6px;
   width: 6px;
   vertical-align: middle;
@@ -687,3 +687,45 @@ li {
 .is_done_text {
   text-decoration: line-through;
 }
+
+.main-block__pagination-wrapper {
+  align-self: center; }
+
+.pagination-wrapper_button {
+  width: 200px;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 200;
+  font-size: 15px;
+  line-height: 20px; }
+
+ul.pagination-wrapper_button {
+  display: inline-block;
+  padding: 5px;
+  margin: 0; }
+
+ul.pagination-wrapper_button li {
+  display: inline; }
+
+ul.pagination-wrapper_button li a {
+  color: black;
+  float: left;
+  padding: 5px 9px;
+  text-decoration: none;
+  margin: 5px;
+}
+
+ul.pagination-wrapper_button li a.active {
+  background-color: #FF4646;
+  color: white;
+  border-radius: 6px; }
+
+ul.pagination-wrapper_button li a:hover:not(.active) {
+  background-color: #ddd;
+  border-radius: 6px; }
+
+.paginator_class {
+  grid-column: 2/3;
+  width: 200px;
+  word-break: break-all;
+  margin-left: 50px; }

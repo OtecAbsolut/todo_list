@@ -11,3 +11,12 @@ def get_count(lists):
     return list(range(DIV_COUNT - len(lists)))
 
 
+@register.filter
+def div_count():
+    """
+    Возвращает список - количество, для генераци пустых блоков
+    """
+
+    return DIV_COUNT
+
+
