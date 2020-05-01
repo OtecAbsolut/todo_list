@@ -6,8 +6,8 @@
 
 {% block create %}
     <div class="table-data__table-header">
-        <div class="table-data_table-header-item-1">{{ list_name }}</div>
-        <a class="add_new_list" href="/create/">
+        <div class="table-data_table-header-item-1">{{ list_name.name }}</div>
+        <a class="add_new_list" href="{% url "list_item:create" pk=list_name.id %}">
             <div class="header__button-create-bundle">+</div>
         </a>
     </div>

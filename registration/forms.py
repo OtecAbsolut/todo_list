@@ -6,10 +6,6 @@ from django.contrib.auth.models import User
 class CustomUserForm(UserCreationForm):
     """ Форма регистрации нового пользователя """
 
-    error_messages = {
-        'password_mismatch': 'Пароль не одинаков!',
-    }
-
     class Meta(UserCreationForm.Meta):
         model = User
         fields = UserCreationForm.Meta.fields + ('email',)
@@ -17,6 +13,9 @@ class CustomUserForm(UserCreationForm):
             'username': {
                 'unique_together': "Имя другое введи...",
                 'unique': "Имя другое введи..."
+            },
+            'password2': {
+                'password_mismatch': "Пароль не одинаков!",
             }
         }
 

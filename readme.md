@@ -295,3 +295,206 @@ class ListForm(forms.ModelForm):
 - Форма создания нового списка дел (кнопка "+")
 - Вьюха создания нового списка
 - Шаблон создания нового списка
+
+# УРОК 5
+- разминка для хвоста
+```python
+calculator = Calculator(10)
+print(calculator.plus(5).minus(3).calc())
+# 12
+calculator2 = Calculator(12)
+# 9
+print(calculator2.plus(5).minus(3).minus(6).plus(1).calc())
+```
+- Разбор д\з
+- Форма Логин\пароль
+- View Логин\пароль
+```python
+def login_view(request):
+    """
+    Контроллер, который рендерит страницу авторизации.
+    В случае успешной авторизации редиректит на главную
+    """
+    form = LoginForm()
+
+    if request.method == 'POST':
+        form = LoginForm(data=request.POST)
+        success_url = reverse('main:main')
+
+        if form.is_valid():
+            username = form.cleaned_data.get('login')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+
+            if user and user.is_active:
+                login(request, user)
+                return redirect(success_url)
+
+    return render(request, 'login.html', {'form': form})
+```
+- Создание ного списка дел (View)
+```python
+def create_new_list(request):
+    """
+    Обработка запроса на создание нового списка
+    """
+    form = ListForm()
+    success_url = reverse('main:main')
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        form = ListForm({
+            'name': name,
+            'user': request.user
+        })
+
+        if form.is_valid():
+            form.save()
+
+            return redirect(success_url)
+
+        form = ListForm()
+
+    return render(request, new_list_item.html, {'form': form})
+```
+- Привязка своих стилей к форме
+
+# УРОК 6
+- Зарядка для хвоста
+```python
+# 1
+a = [1, 2, 3]
+b = a
+a = a + [4, 5]
+print(a, b, sep='\n')
+
+# 2
+row = [' '] * 3
+print(row)
+board = [row] * 3
+print(board)
+board[0][0] = 'x'
+print(board)
+```
+- Вывод ошибок валидации пользователю
+```python
+ error_messages = {
+            'username': {
+                'unique_together': "Имя другое введи...",
+                'unique': "Имя другое введи..."
+            }
+        }
+```
+- Ограничения в ДБ
+```python
+class Meta:
+    unique_together = ('accounting_method', 'account')
+```
+- Индексы (Теория)
+- Декоратор login_required
+```python
+from django.contrib.auth.decorators import login_required
+@login_required(login_url='registration/login/')
+```
+- Пагинация страниц
+
+```python
+from django.core.paginator import Paginator
+from django.core.paginator import EmptyPage
+from django.core.paginator import PageNotAnInteger
+
+PAGE_COUNT = 6
+def view_with_pagination(request):
+    context = {}
+    lists = ListModel.objects.filter(
+        user=request.user,
+    ).order_by(
+        'created'
+    )
+    paginator = Paginator(lists, PAGE_COUNT)
+    page = request.GET.get('page')
+
+    try:
+        list_page = paginator.page(page)
+    except PageNotAnInteger:
+        list_page = paginator.page(1)
+    except EmptyPage:
+        list_page = paginator.page(paginator.num_pages)
+
+    context['lists'] = list_page
+    context['pages'] = list(paginator.page_range)
+    context['user'] = request.user.username
+
+    return render(request, 'index.html', context)
+```
+- Отрисовка в шаблоне
+```python
+{% block empty_div %}
+    {% if lists|length < 6 %}
+        {% for _ in lists|get_count %}
+            <div class="table-data__table-row">
+                <div class="table-row_table_cell-1"></div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if pages.1 %}
+        <div class="table-data__table-row">
+            <div class="paginator_class">
+                <ul class="pagination-wrapper_button">
+                    {% for page in pages %}
+                        <li><a class="active" href="/?page={{ page }}">{{ page }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+```
+- *Generic
+```python
+class RegistrationUserView(CreateView):
+    """
+    Generic для обновления расписания на страницы настроек
+    """
+    model = User
+    template_name = 'registration.html'
+    success_url = reverse_lazy('registration:login')
+    form_class = CustomUserCreationForm
+```
+- Форма создания элемента списка
+
+##Д\З
+- Предыдущее 
+```python
+def list_item_view(request, pk):
+    user = request.user
+    list_items = ListItem.objects.filter(
+        list=pk,
+    ).order_by(
+        'created'
+    )
+    list_name = ListModel.objects.filter(id=pk).first()
+    context = {
+        'list_items': list_items,
+        'user': user.username,
+        'list_name': list_name.name
+    }
+    return render(request, 'list.html', context)
+```
+- Кнопка "Разлогирование пользователя"
+```python
+from django.contrib.auth import logout
+```
+- Кнопка закрытия на форме нового элемента списка (переход обратно на страницу с элементами списка)
+ ```python
+<a href="{% url "list_item:list_item"%}">
+``` 
+- Форма редактирования элемента списка
+- Форма редактирования  списка
+- Добавить ограничение в модели на поле **name** в эелементах списка
+- Добавить вывод предупреждения в форму при попытки добавить дело
+с уже существующем именем 
+- Пагинация на странице list.html
+- Добавить login_required
+- Выделить шаблон master для форм списков
+
