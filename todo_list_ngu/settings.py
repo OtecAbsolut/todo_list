@@ -125,6 +125,9 @@ USE_TZ = True
 # Минимальное число div на странице
 DIV_COUNT = 6
 
+# Кол-во строк контента на страницы
+PAGE_COUNT = 6
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 

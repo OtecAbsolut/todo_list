@@ -5,8 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
-
-PAGE_COUNT = 6
+from todo_list_ngu.settings import PAGE_COUNT
 
 
 @login_required(login_url='registration/login/')
@@ -57,6 +56,24 @@ def create_view(request):
     return render(request, 'new_list.html', {'form': form})
 
 
+@login_required(login_url='registration/login/')
 def edit_view(request, pk):
-    return 'Hello'
+    list_ = ListModel.objects.filter(id=pk).first()
+
+    if request.method == 'POST':
+        form = ListForm({
+            'name': request.POST['name'],
+            'user': request.user
+        }, instance=list_)
+        success_url = reverse('main:main')
+
+        if form.is_valid():
+            form.save()
+            return redirect(success_url)
+    else:
+        form = ListForm(instance=list_)
+
+    return render(
+        request, 'new_list.html', {'form': form}
+    )
 

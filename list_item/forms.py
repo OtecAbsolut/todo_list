@@ -9,6 +9,7 @@ class ListItemForm(forms.ModelForm):
     """
     name = forms.CharField(required=True, widget=forms.TextInput())
     expire_date = forms.DateField(
+        required=False,
         widget=forms.DateInput(attrs={'type': 'date'}))
 
     class Meta:

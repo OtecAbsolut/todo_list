@@ -464,6 +464,7 @@ class RegistrationUserView(CreateView):
 - Форма создания элемента списка
 
 ##Д\З
+
 - Предыдущее 
 ```python
 def list_item_view(request, pk):
@@ -489,12 +490,90 @@ from django.contrib.auth import logout
  ```python
 <a href="{% url "list_item:list_item"%}">
 ``` 
-- Форма редактирования элемента списка
+- Форма редактирования элемента списка 
 - Форма редактирования  списка
-- Добавить ограничение в модели на поле **name** в эелементах списка
+- Добавить ограничение в модели на поле **name** в элементах списка
 - Добавить вывод предупреждения в форму при попытки добавить дело
 с уже существующем именем 
 - Пагинация на странице list.html
 - Добавить login_required
 - Выделить шаблон master для форм списков
+
+# Урок 7
+## Dom-дерево
+
+![dom](img/dom.png)
+
+https://learn.javascript.ru/dom-nodes  
+
+Виртуальный DOM  
+https://habr.com/ru/post/256965/
+
+## JavaScript - работа c эелементами дерева
+- Ассинхронный запрос fetch  
+https://learn.javascript.ru/fetch
+- Получение csrf токена из JS
+```javascript
+//Получение csrf tokena из cookie
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+```
+- Функция зачеркивания
+```css
+.table-row_table_cell-1 {
+    cursor: pointer;
+}
+```
+```javascript
+// Добавление удаление css класса
+const element = document.getElementById("div1");
+element.classList.add("otherclass");
+element.classList.remove("otherclass");
+```
+```javascript
+function isDoneRequest(event) {
+    const id = event.target.id.split('_').pop();
+    const listId = document.location.href.split('/').pop();
+    const url = document.location.href.replace(`/${listId}`, '/done/');
+    return fetch(url, {
+        method: 'POST',
+        headers: new Headers({'X-CSRFToken': token}),
+        redirect: 'follow',
+        body: JSON.stringify({id: id})
+    }).then(respone => {
+        if (respone.status === 201) {
+            if (event.target.classList.contains('is_done_text')) {
+                event.target.classList.remove('is_done_text');
+            } else {
+                event.target.classList.add('is_done_text');
+            }
+        } else {
+            alert('Сервер не доступен');
+        }
+    })
+}
+```
+- Дебаг в браузере
+
+## ДЗ 
+- Написать логику, зачеркивания Списка, когда
+все дела в этом списке выполнены.
+Переопределив метод save() в модели элементов списка.
+- Прочитать статьи про DOM.
 
