@@ -33,7 +33,7 @@
                 <div class='user-profile__user-name'>
                     <span>{{ user }}</span>
                 </div>
-                <a class="user-profile_exit-button" href="/logout"><img
+                <a class="user-profile_exit-button" href="{% url 'registration:logout' %}"><img
                         src="/static/images/exit.svg" alt="exit"></a>
             </div>
         </div>
@@ -62,8 +62,7 @@
 </div>
 
 </body>
+{% block js %}
 
-<script>
-</script>
-
+{% endblock %}
 </html>

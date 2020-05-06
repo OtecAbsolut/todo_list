@@ -1,19 +1,11 @@
 {% extends 'form.html' %}
 
-{% block title %}
-    <title>Новый список</title>
-{% endblock %}
-
-{% block header %}
-    <div class="auth__column_right_form__header">
-       Новый список
-    </div>
-{% endblock %}
 
 {% block body %}
     <form class="auth_form_class" action="" id="auth_form" method="POST">
       {% csrf_token %}
       {{ form.name }}
+      {{ form.expire_date }}
       {% if form.non_field_errors  %}
           {% for error in form.non_field_errors %}
             {{ error }}
@@ -23,7 +15,7 @@
 {% endblock %}
 
 {% block cancel %}
-    <a href="{% url "main:main" %}">
+    <a href="{% url "list_item:list_item" pk=pk %}">
         <div class="auth__button_submit" id="login-cancel-btn" ><span>&#9587</span></div>
     </a>
 {% endblock %}

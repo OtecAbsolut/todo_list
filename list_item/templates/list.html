@@ -16,14 +16,14 @@
 {% block body %}
     {% for row in list_items %}
     <div class="table-data__table-row">
-        {% if list.is_done %}
-            <div class="table-row_table_cell-1 is_done_text"> {{ row.name }}</div>
+        {% if row.is_done %}
+            <div id="isDone_{{ row.id }}" class="table-row_table_cell-1 is_done_text"> {{ row.name }}</div>
         {% else %}
-            <div class="table-row_table_cell-1"> {{ row.name }}</div>
+            <div id="isDone_{{ row.id }}" class="table-row_table_cell-1"> {{ row.name }}</div>
         {% endif %}
         <div class="buttons">
             <div class="table-data-two_table-icon">
-                <a href='#'>
+                <a href='{% url "list_item:edit" pk=row.id %}'>
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                          xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd"
@@ -36,9 +36,7 @@
                 {% if row.expire_date %}
                     {{ row.expire_date }}
                 {% else %}
-                    <a href='#'>
-                        <img src="/static/images/calendar.png" alt="calendar" width="26px" height="24px">
-                    </a>
+                    <img src="/static/images/calendar.png" alt="calendar" width="26px" height="24px">
                 {% endif %}
             </div>
             <div class="table-row_table_icon">
@@ -64,4 +62,66 @@
             </div>
         {% endfor %}
     {% endif %}
+    {% if pages.1 %}
+        <div class="table-data__table-row">
+            <div class="paginator_class">
+                <ul class="pagination-wrapper_button">
+                    {% for page in pages %}
+                        <li><a class="active" href="/list/{{ list_name.id }}?page={{ page }}">{{ page }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block js %}
+<script>
+const rows = document.querySelectorAll('.table-row_table_cell-1');
+rows.forEach(handler);
+const token = getCookie('csrftoken');
+
+function handler(row) {
+    row.addEventListener('click', isDoneRequest);
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function isDoneRequest(event) {
+    const id = event.target.id.split('_').pop();
+    const listId = document.location.href.split('/').pop();
+    const url = document.location.href.replace(`/${listId}`, '/done/');
+    return fetch(url, {
+        method: 'POST',
+        headers: new Headers({'X-CSRFToken': token}),
+        redirect: 'follow',
+        body: JSON.stringify({id: id})
+    }).then(respone => {
+        if (respone.status === 201) {
+            if (event.target.classList.contains('is_done_text')) {
+                event.target.classList.remove('is_done_text');
+            } else {
+                event.target.classList.add('is_done_text');
+            }
+        } else {
+            alert('Сервер не доступен');
+        }
+    })
+}
+</script>
 {% endblock %}
