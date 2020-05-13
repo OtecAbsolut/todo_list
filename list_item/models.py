@@ -15,9 +15,19 @@ class ListItem(models.Model):
 
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None):
-        # TODO Написать логику, зачеркивания Списка, когда все дела в этом списке выполнены
-        list_ = self.list
         super().save()
+        list_ = self.list
+        # Если у всех элементов True, то True будет и у списка
+        ListItem.objects.filter(list=list_)
+        if all(list_.listitem_set.all().values_list('is_done', flat=True)):
+            list_.is_done = True
+            list_.save()
+        else:
+            # А если предположим что одно дело опять стало False, то
+            # Надо сделать False и у списка (Если при это оно было True)
+            if list_.is_done:
+                list_.is_done = False
+                list_.save()
 
     class Meta:
         verbose_name = 'Элемент списка'

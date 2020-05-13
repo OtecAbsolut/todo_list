@@ -6,7 +6,12 @@
 
 {% block create %}
     <div class="table-data__table-header">
-        <div class="table-data_table-header-item-1">{{ list_name.name }}</div>
+        <div class="table-data_table-header-item-1">
+            <a href="{% url "main:main" %}">{{ list_name.name }}</a>
+        </div>
+        <a class="table-data_table-header-item-2" href="{% url "list_item:all_done" %}">
+            <div class="header__button-create-bundle">all</div>
+        </a>
         <a class="add_new_list" href="{% url "list_item:create" pk=list_name.id %}">
             <div class="header__button-create-bundle">+</div>
         </a>
@@ -15,9 +20,9 @@
 
 {% block body %}
     {% for row in list_items %}
-    <div class="table-data__table-row">
+    <div id="row_{{ row.id }}" class="table-data__table-row">
         {% if row.is_done %}
-            <div id="isDone_{{ row.id }}" class="table-row_table_cell-1 is_done_text"> {{ row.name }}</div>
+            <div id="isDone_{{ row.id }}"  class="table-row_table_cell-1 is_done_text"> {{ row.name }}</div>
         {% else %}
             <div id="isDone_{{ row.id }}" class="table-row_table_cell-1"> {{ row.name }}</div>
         {% endif %}
@@ -40,7 +45,7 @@
                 {% endif %}
             </div>
             <div class="table-row_table_icon">
-                <a class="delete_button" href="#">
+                <a class="delete_button" href='{% url "list_item:delete" pk=row.id %}'>
                     <svg width="20" height="22" viewBox="0 0 20 22" fill="none"
                          xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd"
@@ -77,9 +82,21 @@
 
 {% block js %}
 <script>
+const body = document.getElementsByClassName('relationship__table-data')[0];
+const listId = JSON.parse('{{ list_name.id|safe }}');
 const rows = document.querySelectorAll('.table-row_table_cell-1');
-rows.forEach(handler);
+const delButtons = document.querySelectorAll('.delete_button');
 const token = getCookie('csrftoken');
+const deleteAllButton = document.getElementsByClassName('table-data_table-header-item-2')[0];
+
+rows.forEach(handler);
+delButtons.forEach(button => button.addEventListener('click', delFunction));
+deleteAllButton.addEventListener('click', allDone);
+
+function allDone(event) {
+    event.preventDefault();
+    console.log('Click allDone');
+}
 
 function handler(row) {
     row.addEventListener('click', isDoneRequest);
@@ -104,7 +121,6 @@ function getCookie(name) {
 
 function isDoneRequest(event) {
     const id = event.target.id.split('_').pop();
-    const listId = document.location.href.split('/').pop();
     const url = document.location.href.replace(`/${listId}`, '/done/');
     return fetch(url, {
         method: 'POST',
@@ -123,5 +139,50 @@ function isDoneRequest(event) {
         }
     })
 }
+function createMessageBlock(title, text) {
+    const divBlock = document.createElement('div');
+    divBlock.className = 'wrapper__auth';
+    divBlock.id = "id_new_edit_block";
+    divBlock.innerHTML = `<div class="auth__column_right"><div class="auth__column_right_form"><div class="auth__column_right_form__header">${ title }</div><div id="message_text"> ${ text }</div><div class="auth__column_right__form_footer"><label class="form_footer_button-submit"><input type="submit" form="auth_form" value="" style="display: none"><a href="#" id="login-submit-btn"><div class="auth__button_submit"  ><span>&#10004</span></div></a></label><label class="form_footer_button-cancel"><a href="#" id="cancel_btn"><div class="auth__button_submit" id="login-cancel-btn" ><span>&#9587</span></div></a></label></div></div></div>`;
+    return divBlock;
+}
+
+function deleteMessageBlock(event) {
+   event.preventDefault();
+   document.getElementById('id_new_edit_block').remove();
+}
+
+function deleteListItem(url, event) {
+    debugger;
+    const pk = url.split('/').pop();
+    const rowId = `row_${pk}`;
+    deleteMessageBlock(event);
+    return fetch(url, {
+        method: 'POST',
+        headers: new Headers({'X-CSRFToken': token}),
+        redirect: 'follow',
+    }).then(respone => {
+        if (respone.status === 201) {
+            document.getElementById(rowId).remove()
+        } else {
+            alert('Удалить не получилось');
+        }
+    })
+}
+
+function delFunction(event) {
+    debugger;
+    event.preventDefault();
+    const url = event.currentTarget.href;
+    const message = createMessageBlock('Внимание', 'Вы действительно хотите удалить дело?');
+    body.appendChild(message);
+    document.getElementById('cancel_btn').addEventListener(
+        'click', event => deleteMessageBlock(event));
+    document.getElementById('login-submit-btn').addEventListener(
+        'click', event => deleteListItem(url, event)
+    )
+}
+
+
 </script>
 {% endblock %}

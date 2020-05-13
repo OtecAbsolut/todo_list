@@ -577,3 +577,43 @@ function isDoneRequest(event) {
 Переопределив метод save() в модели элементов списка.
 - Прочитать статьи про DOM.
 
+# УРОК №8
+- Функция удаления
+```javascript
+const delButtons = document.querySelectorAll('.delete_button');
+
+delButtons.forEach(button => {
+    button.addEventListener('click', delUrl(genFunc));
+});
+
+function DeleteRequest(event) {
+    event.preventDefault();
+    const url = event.currentTarget.href;
+    const pk = url.split('/').pop();
+    const listId = generateFunc(pk);
+    return fetch(url, {
+        method: 'POST',
+        headers: new Headers({'X-CSRFToken': csrftoken}),
+        redirect: 'follow'
+    }).then(
+        response => {
+            if (response.status === 200) {
+                document.getElementById(listId).remove();
+            }
+        }
+    );
+}
+```
+- Создание HTML блока средствами js
+```javascript
+function createMessageBlock(title, text) {
+    const divBlock = document.createElement('div');
+    divBlock.className = 'wrapper__auth';
+    divBlock.id = "id_new_edit_block";
+    divBlock.innerHTML = `<div class="auth__column_right"><div class="auth__column_right_form"><div class="auth__column_right_form__header">${ title }</div><div id="message_text"> ${ text }</div><div class="auth__column_right__form_footer"><label class="form_footer_button-submit"><input type="submit" form="auth_form" value="" style="display: none"><a href="#" id="login-submit-btn"><div class="auth__button_submit"  ><span>&#10004</span></div></a></label><label class="form_footer_button-cancel"><a href="#" id="cancel_btn"><div class="auth__button_submit" id="login-cancel-btn" ><span>&#9587</span></div></a></label></div></div></div>`;
+    return divBlock;
+}
+```
+## ДЗ 
+- Кнопка all, которая вычеркивает все дела
+- Кнопка удаления всего списка на страницы index.html
