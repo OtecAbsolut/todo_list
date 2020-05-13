@@ -19,9 +19,9 @@
         <div class="table-row_table_cell-1">
             <a href="{% url "list_item:list_item" pk=list.id %}">
                 {% if list.is_done  %}
-                    {{ list.name }}
+                    <div class="table-row_table_cell-1 is_done_text"> {{ list.name }}</div>
                 {% else %}
-                    {{ list.name }}
+                    <div class="table-row_table_cell-1"> {{ list.name }}</div>
                 {% endif %}
             </a>
         </div>

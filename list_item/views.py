@@ -7,8 +7,11 @@ from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
 from todo_list_ngu.settings import PAGE_COUNT
+from django.contrib.auth.decorators import login_required
 import json
 
+
+@login_required(login_url='registration/login/')
 def list_item_view(request, pk):
     user = request.user
     list_items = ListItem.objects.filter(
@@ -35,6 +38,7 @@ def list_item_view(request, pk):
     return HttpResponseNotFound('<h1>Page not found</h1>')
 
 
+@login_required(login_url='registration/login/')
 def create_item_view(request, pk):
     form = ListItemForm()
     if request.method == 'POST':
@@ -56,6 +60,7 @@ def create_item_view(request, pk):
     )
 
 
+@login_required(login_url='registration/login/')
 def edit_list_item_view(request, pk):
     list_item = ListItem.objects.filter(id=pk).first()
     list_id = list_item.list_id
@@ -79,11 +84,31 @@ def edit_list_item_view(request, pk):
     )
 
 
+@login_required(login_url='registration/login/')
 def done_view(request):
-    data = json.loads(request.body.decode())
-    pk = int(data['id'])
-    list_item = ListItem.objects.get(id=pk)
-    value = not list_item.is_done
-    list_item.is_done = value
-    list_item.save()
+    if request.method == 'POST':
+        data = json.loads(request.body.decode())
+        pk = int(data['id'])
+        list_item = ListItem.objects.get(id=pk)
+        value = not list_item.is_done
+        list_item.is_done = value
+        list_item.save()
+        return HttpResponse(status=201)
+    return HttpResponse(status=404)
+
+
+@login_required(login_url='/registration/login/')
+def delete_item_view(request, pk):
+    if request.method == 'POST':
+        list_item = ListItem.objects.filter(id=pk).first()
+        if list_item:
+            list_item.delete()
+            return HttpResponse(status=201)
+
+    return HttpResponse(status=404)
+
+
+def all_done_view(request):
+    # TODO ДЗ => Написать логику вычеркивания всех элементов и не забыть
+    # TODO про вычеркивание всего списка
     return HttpResponse(status=201)

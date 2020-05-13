@@ -54,12 +54,13 @@ body {
 
 .wrapper__auth {
   width: 400px;
-  height: 300px;
+  height: 190px;
   position: absolute;
   margin: auto;
   top: 0;
   right: 0;
   bottom: 0;
+  border-radius: 10px;
   left: 0; }
 
 .auth__column_left {
@@ -70,7 +71,7 @@ body {
 
 .auth__column_right {
   width: 400px;
-  height: 300px;
+  height: 200px;
   float: right;
   background-color: #FFFFFF; }
 
@@ -81,7 +82,8 @@ body {
   grid-template-columns: 1fr 5fr 1fr;
   grid-template-rows: 1fr 1fr 1fr;
   align-items: center;
-  border: 2px groove;
+  box-shadow: -10px -10px 10px -10px rgba(34, 60, 80, 0.8) inset;
+  border-radius: 10px;
 }
 
 .auth__column_right_form__header {
@@ -96,6 +98,16 @@ body {
   background: #004949;
   color: #ffffff; }
 
+#message_text {
+  text-align: center;
+  grid-column: 1/4;
+  grid-row: 2/2;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 64px;
+}
 
 .form__header_title_enter {
   float: left;
