@@ -15,7 +15,7 @@
 
 {% block body %}
     {% for list in lists %}
-        <div class="table-data__table-row">
+        <div id="row_{{ list.id }}"class="table-data__table-row">
         <div class="table-row_table_cell-1">
             <a href="{% url "list_item:list_item" pk=list.id %}">
                 {% if list.is_done  %}
@@ -38,7 +38,7 @@
                         </svg>
                     </a>
                 </div>
-                <a class="delete_button" href="#">
+                <a class="delete_button" href='{% url "main:delete" pk=list.id %}'>
                     <div class="table-row_table_icon">
                         <svg width="20" height="22" viewBox="0 0 20 22"
                              fill="none"
@@ -76,4 +76,73 @@
             </div>
         </div>
     {% endif %}
+{% endblock %}
+
+{% load static %}
+{% block js %}
+<script src="{% static '/js/core.js' %}"></script>
+<script>
+const body = document.getElementsByClassName('relationship__table-data')[0];
+const delButtons = document.querySelectorAll('.delete_button');
+const token = getCookie('csrftoken');
+
+delButtons.forEach(button => {
+    button.addEventListener('click', delFunction);
+});
+
+function deleteMessageBlock(event) {
+   event.preventDefault();
+   document.getElementById('id_new_edit_block').remove();
+}
+
+function deleteListItem(url, event) {
+    debugger;
+    const pk = url.split('/').pop();
+    const rowId = `row_${pk}`;
+    deleteMessageBlock(event);
+    return fetch(url, {
+        method: 'POST',
+        headers: new Headers({'X-CSRFToken': token}),
+        redirect: 'follow',
+    }).then(respone => {
+        if (respone.status === 201) {
+            document.getElementById(rowId).remove()
+        } else {
+            alert('Удалить не получилось');
+        }
+    })
+}
+
+function delFunction(event) {
+    event.preventDefault();
+    const url = event.currentTarget.href;
+    const message = createMessageBlock('Внимание', 'Вы действительно хотите удалить список дел?');
+    body.appendChild(message);
+    document.getElementById('cancel_btn').addEventListener(
+        'click', event => deleteMessageBlock(event));
+    document.getElementById('login-submit-btn').addEventListener(
+        'click', event => deleteListItem(url, event)
+    )
+}
+
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+
+</script>
 {% endblock %}

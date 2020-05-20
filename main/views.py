@@ -6,9 +6,10 @@ from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
 from todo_list_ngu.settings import PAGE_COUNT
+from django.http import HttpResponse
 
 
-@login_required(login_url='registration/login/')
+@login_required(login_url='/registration/login/')
 def main_view(request):
     """ главная view """
     user = request.user
@@ -37,7 +38,7 @@ def main_view(request):
     return render(request, 'index.html', context)
 
 
-@login_required(login_url='registration/login/')
+@login_required(login_url='/registration/login/')
 def create_view(request):
     form = ListForm()
 
@@ -56,7 +57,7 @@ def create_view(request):
     return render(request, 'new_list.html', {'form': form})
 
 
-@login_required(login_url='registration/login/')
+@login_required(login_url='/registration/login/')
 def edit_view(request, pk):
     list_ = ListModel.objects.filter(id=pk).first()
 
@@ -77,3 +78,9 @@ def edit_view(request, pk):
         request, 'new_list.html', {'form': form}
     )
 
+
+def delete_view(request, pk):
+    if request.method == 'POST':
+        ListModel.objects.filter(id=pk).delete()
+        return HttpResponse(status=201)
+    return HttpResponse(status=404)

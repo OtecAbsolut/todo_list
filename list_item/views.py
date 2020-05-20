@@ -109,6 +109,14 @@ def delete_item_view(request, pk):
 
 
 def all_done_view(request):
-    # TODO ДЗ => Написать логику вычеркивания всех элементов и не забыть
-    # TODO про вычеркивание всего списка
-    return HttpResponse(status=201)
+    if request.method == 'POST':
+        data = json.loads(request.body.decode())
+        all_true, list_id = data.get('all_true'), data.get('list_id')
+        value = not all_true
+        if list_id:
+            list_ = ListModel.objects.get(id=list_id)
+            list_.listitem_set.all().update(is_done=value)
+            list_.is_done = value
+            list_.save()
+            return HttpResponse(status=201)
+    return HttpResponse(status=404)
