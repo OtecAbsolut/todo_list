@@ -84,7 +84,7 @@ DATABASES = {
         "HOST": "127.0.0.1",
         "NAME": "todo",
         "USER": "postgres",
-        "PASSWORD": "fred",
+        "PASSWORD": "7415963Kokos",
         "PORT": 5432
     }
 }

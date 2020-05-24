@@ -90,10 +90,27 @@ const rows = Array.from(document.querySelectorAll('.table-row_table_cell-1')).fi
 const delButtons = document.querySelectorAll('.delete_button');
 const token = getCookie('csrftoken');
 const deleteAllButton = document.getElementsByClassName('table-data_table-header-item-2')[0];
+const allItems = JSON.parse('{{ data_for_js|safe }}');
+const itemCache = {};
+const indexId = {};
+const IdIndex = {};
+allItems.forEach((item, index) => {
+    itemCache[item.id] = item;
+    indexId[index] = item.id;
+    IdIndex[item.id] = index;
+});
 
 rows.forEach(handler);
 delButtons.forEach(button => button.addEventListener('click', delFunction));
 deleteAllButton.addEventListener('click', allDone);
+
+function updateBody(delId) {
+    // 6 число эелементов на странице
+    const nextItem = itemCache[indexId[6]];
+    if (nextItem) {
+        console.log('создаем новую строку в конце')
+    }
+}
 
 function allDone(event) {
     event.preventDefault();
@@ -131,7 +148,7 @@ function handler(row) {
 
 function isDoneRequest(event) {
     const id = event.target.id.split('_').pop();
-    const url = document.location.href.replace(`/${listId}`, '/done/');
+    const url = document.location.href.replace(`list/${listId}`, 'list/done/');
     return fetch(url, {
         method: 'POST',
         headers: new Headers({'X-CSRFToken': token}),
@@ -168,6 +185,8 @@ function deleteListItem(url, event) {
     }).then(respone => {
         if (respone.status === 201) {
             document.getElementById(rowId).remove()
+            delete itemCache[pk];
+            updateBody(pk);
         } else {
             alert('Удалить не получилось');
         }

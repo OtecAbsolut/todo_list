@@ -17,25 +17,32 @@ def list_item_view(request, pk):
     list_items = ListItem.objects.filter(
         list=pk, list__user=user).order_by('created')
 
-    if list_items:
-        paginator = Paginator(list_items, PAGE_COUNT)
-        page = request.GET.get('page')
-        try:
-            list_page = paginator.page(page)
-        except PageNotAnInteger:
-            list_page = paginator.page(1)
-        except EmptyPage:
-            list_page = paginator.page(paginator.num_pages)
+    data = []
+    for item in list_items.values():
+        item['expire_date'] = (item['expire_date'].strftime('%Y-%m-%d')
+                               if item.get('expire_date') else '')
+        item['created'] = item['created'].strftime('%Y-%m-%d')
+        item['modified'] = item['modified'].strftime('%Y-%m-%d')
+        data.append(item)
 
-        list_name = ListModel.objects.filter(id=pk).first()
-        context = {
-            'list_items': list_page,
-            'user': user.username,
-            'list_name': list_name,
-            'pages': list(paginator.page_range)
-        }
-        return render(request, 'list.html', context)
-    return HttpResponseNotFound('<h1>Page not found</h1>')
+    paginator = Paginator(list_items, PAGE_COUNT)
+    page = request.GET.get('page')
+    try:
+        list_page = paginator.page(page)
+    except PageNotAnInteger:
+        list_page = paginator.page(1)
+    except EmptyPage:
+        list_page = paginator.page(paginator.num_pages)
+
+    list_name = ListModel.objects.filter(id=pk).first()
+    context = {
+        'list_items': list_page,
+        'user': user.username,
+        'list_name': list_name,
+        'pages': list(paginator.page_range),
+        'data_for_js': json.dumps(data)
+    }
+    return render(request, 'list.html', context)
 
 
 @login_required(login_url='registration/login/')
