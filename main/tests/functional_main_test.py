@@ -11,7 +11,7 @@ TEST_CLIENT = {
 }
 
 
-def test_open_login_page(live_server, new_client):
+def test_open_login_page(client, live_server, new_client):
     """
     Новый пользователь Юля, открывает
     браузер и решает ввести 'http://127.0.0.1:8000/'.
@@ -31,5 +31,16 @@ def test_open_login_page(live_server, new_client):
     button.click()
 
     WebDriverWait(browser, 3).until(es.title_is('Главная'))
-    # time.sleep(3)
     assert browser.title == 'Главная'
+    button = browser.find_element_by_class_name('header__button-create-bundle')
+    button.click()
+    WebDriverWait(browser, 3).until(es.title_is('Новый список'))
+    assert browser.title == 'Новый список'
+    name = browser.find_element_by_name('name')
+    name.send_keys('Новое важное дело')
+    button = browser.find_element_by_id('login-submit-btn')
+    button.click()
+    WebDriverWait(browser, 3).until(es.title_is('Главная'))
+    new_list = browser.find_element_by_class_name('table-row_table_cell-1')
+    assert new_list.text == 'Новое важное дело'
+    browser.close()

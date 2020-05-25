@@ -849,3 +849,66 @@ AND убедиться, что карточка возвращена
 - Тест c Selenium на создание нового списка дел
 - ***Решить проблему с пагинацией
 
+# УРОК 11 (Заключительное занятие)
+### Что не успели
+- generic  
+https://docs.djangoproject.com/en/3.0/topics/class-based-views/generic-display/  
+
+- celery
+https://docs.celeryproject.org/en/stable/  
+https://django-celery-beat.readthedocs.io/en/latest/  
+- websocket
+
+## Разворачивание Django-приложения
+- связка nginx - gunicorn - django 
+
+![nginx](img/nginx.png)
+
+https://nginx.org/ru/  
+https://gunicorn.org/  
+
+```
+nginx [engine x] — это HTTP-сервер и обратный прокси-сервер, 
+почтовый прокси-сервер, а также TCP/UDP прокси-сервер общего назначения, 
+изначально написанный Игорем Сысоевым. Уже длительное время он обслуживает 
+серверы многих высоконагруженных российских сайтов, таких как Яндекс, Mail.Ru, 
+ВКонтакте и Рамблер. 
+Согласно статистике Netcraft nginx обслуживал или проксировал 25.54% 
+самых нагруженных сайтов в апреле 2020 года. Вот некоторые примеры успешного 
+внедрения nginx (тексты на английском языке): Dropbox, Netflix, Wordpress.com, 
+FastMail.FM.
+```
+
+```
+Gunicorn — это WSGI-сервер, созданный для использования в UNIX-системах. 
+Название — сокращенная и комбинированная версия слов «Green Unicorn». 
+На самом сайте проекта есть зеленый единорог. Gunicorn был перенесен 
+из проекта «Unicorn» из языка Ruby. Он относительно быстрый, ресурсоёмкий, 
+легко запускается и работает с широким спектром веб-фреймворков.
+```
+### WSGI
+https://habr.com/ru/post/426957/  
+
+### Пример запуска приложения на сервер **centos 7**
+https://habr.com/ru/post/277653/  
+
+### Где взять сервер?
+- https://www.arubacloud.com/vps/virtual-private-server-range.aspx
+- https://console.cloud.google.com/getting-started?hl=ru&pli=1
+
+### SSL сертификаты
+- https://certbot.eff.org/lets-encrypt/centosrhel7-nginx
+
+## Про чатботов
+- Telegram
+https://core.telegram.org/bots  
+
+- Viber  
+https://developers.viber.com/
+
+- Webhook
+- Ngrook  
+https://ngrok.com/
+
+
+## Напутствие

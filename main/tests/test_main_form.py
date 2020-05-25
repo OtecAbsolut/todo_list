@@ -5,10 +5,11 @@ import pytest
 
 @pytest.mark.django_db
 def test_invalid_token_fields(new_client):
-    ListForm({
+    data = {
         'name': 'Тестовый список',
         'user': new_client
-    }).save()
-
-    assert 'Имя уже существует' in ListForm(
-        {'name': 'Тестовый список', 'user': new_client}).non_field_errors()
+    }
+    form = ListForm(data)
+    form.save()
+    form = ListForm(data)
+    assert 'Имя уже существует' in form.non_field_errors()

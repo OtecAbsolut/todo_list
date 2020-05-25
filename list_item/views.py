@@ -17,25 +17,28 @@ def list_item_view(request, pk):
     list_items = ListItem.objects.filter(
         list=pk, list__user=user).order_by('created')
 
-    if list_items:
-        paginator = Paginator(list_items, PAGE_COUNT)
-        page = request.GET.get('page')
-        try:
-            list_page = paginator.page(page)
-        except PageNotAnInteger:
-            list_page = paginator.page(1)
-        except EmptyPage:
-            list_page = paginator.page(paginator.num_pages)
+    paginator = Paginator(list_items, PAGE_COUNT)
+    page = request.GET.get('page', 1)
+    try:
+        list_page = paginator.page(page)
+    except PageNotAnInteger:
+        list_page = paginator.page(1)
+    except EmptyPage:
+        list_page = paginator.page(paginator.num_pages)
 
-        list_name = ListModel.objects.filter(id=pk).first()
-        context = {
-            'list_items': list_page,
-            'user': user.username,
-            'list_name': list_name,
-            'pages': list(paginator.page_range)
-        }
-        return render(request, 'list.html', context)
-    return HttpResponseNotFound('<h1>Page not found</h1>')
+    list_name = ListModel.objects.filter(id=pk).first()
+    context = {
+        'list_items': list_page,
+        'user': user.username,
+        'list_name': list_name,
+        'pages': list(paginator.page_range),
+        'page_count_js': json.dumps(len(paginator.page_range)),
+        'items_count_js': json.dumps(list_items.count()),
+        'current_page': json.dumps(page),
+        'item_on_page': json.dumps(len(list_page)),
+        'max_item_on_page': json.dumps(PAGE_COUNT)
+    }
+    return render(request, 'list.html', context)
 
 
 @login_required(login_url='registration/login/')
