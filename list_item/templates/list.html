@@ -68,11 +68,11 @@
         {% endfor %}
     {% endif %}
     {% if pages.1 %}
-        <div class="table-data__table-row">
+        <div id="paginator" class="table-data__table-row">
             <div class="paginator_class">
                 <ul class="pagination-wrapper_button">
                     {% for page in pages %}
-                        <li><a class="active" href="/list/{{ list_name.id }}?page={{ page }}">{{ page }}</a></li>
+                        <li><a id="page_link_{{ page }}" class="active" href="/list/{{ list_name.id }}?page={{ page }}">{{ page }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
@@ -86,14 +86,51 @@
 <script>
 const body = document.getElementsByClassName('relationship__table-data')[0];
 const listId = JSON.parse('{{ list_name.id|safe }}');
+const maxItemCount = JSON.parse('{{ max_item_on_page|safe }}');
 const rows = Array.from(document.querySelectorAll('.table-row_table_cell-1')).filter(row => row.id);
 const delButtons = document.querySelectorAll('.delete_button');
 const token = getCookie('csrftoken');
 const deleteAllButton = document.getElementsByClassName('table-data_table-header-item-2')[0];
+// Кол-во страниц
+const pageCount = JSON.parse('{{ page_count_js|safe }}');
+// Общее кол-во элементов на странице
+const itemsCount = JSON.parse('{{ items_count_js|safe }}');
+// Номер текущей страницы
+const currentPage = JSON.parse('{{ current_page|safe }}');
+// Кол-во элементов на странице
+const itemOnPage = JSON.parse('{{ item_on_page|safe }}');
 
 rows.forEach(handler);
 delButtons.forEach(button => button.addEventListener('click', delFunction));
 deleteAllButton.addEventListener('click', allDone);
+
+function updatePage() {
+    // если элементов больше 6 то значит есть блок с пагинацией и если страница
+    //  не последняя , то нам нужно будет перегрузить страницу
+    if (itemsCount > maxItemCount && currentPage !== pageCount) {
+        return document.location.reload();
+    }
+    // Если страница последняя или нет вобще пагинации то надо добавить пустой блок
+    if (itemsCount <= maxItemCount || currentPage === pageCount) {
+        const paginator = document.getElementById('paginator');
+        if (paginator) {
+            paginator.insertBefore(createEmptyDiv());
+        } else {
+            body.appendChild(createEmptyDiv());
+        }
+        return ;
+    }
+    // Если удалили последний эл-т на странице, то надо перейти на пред. страницу
+    if (itemsCount > maxItemCount || currentPage === pageCount) {
+        return document.getElementById(`page_link_${currentPage - 1}`).click();
+    }
+}
+function createEmptyDiv() {
+    const divBlock = document.createElement('div');
+    divBlock.className = 'table-data__table-row';
+    divBlock.innerHTML = '<div class="table-row_table_cell-1"></div>';
+    return divBlock;
+}
 
 function allDone(event) {
     event.preventDefault();
@@ -167,7 +204,8 @@ function deleteListItem(url, event) {
         redirect: 'follow',
     }).then(respone => {
         if (respone.status === 201) {
-            document.getElementById(rowId).remove()
+            document.getElementById(rowId).remove();
+            updatePage();
         } else {
             alert('Удалить не получилось');
         }

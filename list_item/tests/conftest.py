@@ -2,6 +2,7 @@ import pytest
 from django.contrib.auth.models import User
 from main.models import ListModel
 
+
 TEST_CLIENT = {
     'username': 'TestUser',
     'email': '123@123.ru',
